@@ -2,7 +2,12 @@
 'use strict';
 const norm = s => String(s || '').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
 const exact = s => String(s||'').normalize('NFKC').toLowerCase().replace(/\s+/g,' ').trim();
-const visible = e => !e.disabled && !e.readOnly && e.getClientRects().length > 0;
+if(!window.__simpleEditedFields) {
+ window.__simpleEditedFields=new WeakSet();
+ const remember=e=>{if(e.isTrusted && e.target.matches('input,select,textarea'))window.__simpleEditedFields.add(e.target);};
+ document.addEventListener('input',remember,true);document.addEventListener('change',remember,true);
+}
+const visible = e => !window.__simpleEditedFields.has(e) && !e.disabled && !e.readOnly && e.getClientRects().length > 0;
 const labelText = x => {const copy=x.cloneNode(true);copy.querySelectorAll('input,select,textarea').forEach(e=>e.remove());return copy.textContent;};
 const label = e => [e.labels && [...e.labels].map(labelText).join(' '), e.getAttribute('aria-label'),(e.getAttribute('aria-labelledby')||'').split(/\s+/).map(id=>(document.getElementById(id)||{}).textContent).join(' '),e.placeholder,e.name,e.id].filter(Boolean);
 const entrySelector='fieldset,[data-simple-entry],[data-automation-id^="workExperience-"],[data-automation-id^="education-"]';
