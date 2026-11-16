@@ -17,6 +17,8 @@ function value(e,v) {
  if(v === undefined || v === null || v === '') return false;
  if(e.type==='file' || e.type==='password' || e.type==='hidden' || e.type==='submit') return false;
  if(e.type==='checkbox' || e.type==='radio') {
+  if(e.type==='checkbox' && e.checked) return false;
+  if(e.type==='radio' && e.name && [...document.querySelectorAll('input[type="radio"]')].some(r=>r.name===e.name && r.form===e.form && r.checked)) return false;
   const desired = typeof v==='boolean' ? v : /^(yes|true)$/i.test(String(v));
   if(e.type==='radio' && norm(e.value)!==norm(v) && norm(e.getAttribute('aria-label'))!==norm(v)) return false;
   if(e.checked!==desired && e.type==='checkbox') e.click();
