@@ -4,13 +4,13 @@ const norm = s => String(s || '').normalize('NFKC').toLowerCase().replace(/[^\p{
 const exact = s => String(s||'').normalize('NFKC').toLowerCase().replace(/\s+/g,' ').trim();
 const visible = e => !e.disabled && !e.readOnly && e.getClientRects().length > 0;
 const labelText = x => {const copy=x.cloneNode(true);copy.querySelectorAll('input,select,textarea').forEach(e=>e.remove());return copy.textContent;};
-const label = e => [e.labels && [...e.labels].map(labelText).join(' '), e.getAttribute('aria-label'),(e.getAttribute('aria-labelledby')||'').split(/\s+/).map(id=>document.getElementById(id)?.textContent).join(' '),e.placeholder,e.name,e.id].filter(Boolean);
+const label = e => [e.labels && [...e.labels].map(labelText).join(' '), e.getAttribute('aria-label'),(e.getAttribute('aria-labelledby')||'').split(/\s+/).map(id=>(document.getElementById(id)||{}).textContent).join(' '),e.placeholder,e.name,e.id].filter(Boolean);
 const entrySelector='fieldset,[data-simple-entry],[data-automation-id^="workExperience-"],[data-automation-id^="education-"]';
 const section = e => {
  const wd=e.closest('[data-automation-id^="workExperience-"],[data-automation-id^="education-"]');
  if(wd) return norm(wd.getAttribute('data-automation-id'));
  const p = e.closest('fieldset,[data-simple-section],section,[data-automation-id="workExperience"],[data-automation-id="education"]');
- return norm(p ? (p.getAttribute('data-simple-section') || p.querySelector('legend,h2,h3,h4')?.textContent || p.getAttribute('data-automation-id')) : '');
+ return norm(p ? (p.getAttribute('data-simple-section') || (p.querySelector('legend,h2,h3,h4')||{}).textContent || p.getAttribute('data-automation-id')) : '');
 };
 const group = e => e.closest(entrySelector) || e.form || document.body;
 function value(e,v) {
@@ -46,19 +46,19 @@ function fill(data,rules) {
   const candidates=rules.filter(r=>(r.key.includes('.')?r.key.startsWith(kind+'.'):true)&&r.aliases.some(a=>labels.includes(norm(a))));
   if(candidates.length===1) key=candidates[0].key;
   let v;
-  if(key?.includes('.')) {
+  if(key && key.includes('.')) {
    const [k,field]=key.split('.'),g=group(e); let idx=groups[k].indexOf(g);if(idx<0){groups[k].push(g);idx=groups[k].length-1;}
-   v=data[k]?.[idx]?.[field];
-  } else if(key) v=data.profile?.[key];
+   v=((data[k]||[])[idx]||{})[field];
+  } else if(key) v=(data.profile||{})[key];
   if(v===undefined) {
-   const q=(e.labels?.[0]?labelText(e.labels[0]):null) || e.getAttribute('aria-label');
-   if(q) v=data.answers?.[exact(q)];
+   const q=((e.labels||[])[0]?labelText(e.labels[0]):null) || e.getAttribute('aria-label');
+   if(q) v=(data.answers||{})[exact(q)];
   }
   if(value(e,v)) count++;
  }
  if(!window.__simpleLastExpand || Date.now()-window.__simpleLastExpand>3000) {
   for(const kind of ['work','education']) {
-   if(groups[kind].length && (data[kind]?.length||0)>groups[kind].length) {
+   if(groups[kind].length && ((data[kind]||[]).length||0)>groups[kind].length) {
     const names=kind==='work'?['add work experience','add another work experience']:['add education','add another education'];
     const buttons=[...document.querySelectorAll('button')].filter(b=>visible(b)&&names.includes(norm(b.textContent)));
     if(buttons.length===1){window.__simpleLastExpand=Date.now();buttons[0].click();break;}
@@ -79,7 +79,7 @@ const confirmed = () => {
  if(!intent || Date.now()-intent>600000) return false;
  const p=platform(location.hostname); const t=norm(document.body.textContent);
  const messages={workday:['application submitted','thank you for applying'],greenhouse:['your application has been submitted','thank you for applying'],ashby:['application submitted','your application has been submitted'],lever:['application submitted','thank you for applying']};
- return messages[p]?.some(m=>t.includes(m)) && !document.querySelector('input[type="email"],input[type="file"]');
+ return (messages[p]||[]).some(m=>t.includes(m)) && !document.querySelector('input[type="email"],input[type="file"]');
 };
 window.SimpleEngine={fill,norm,platform,confirmed};
 })();
