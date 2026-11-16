@@ -3,7 +3,8 @@
 const norm = s => String(s || '').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
 const exact = s => norm(s).replace(/\s+/g,' ');
 const visible = e => !e.disabled && !e.readOnly && e.getClientRects().length > 0;
-const label = e => [e.labels && [...e.labels].map(x=>x.textContent).join(' '), e.getAttribute('aria-label'),e.placeholder,e.name,e.id].filter(Boolean);
+const labelText = x => {const copy=x.cloneNode(true);copy.querySelectorAll('input,select,textarea').forEach(e=>e.remove());return copy.textContent;};
+const label = e => [e.labels && [...e.labels].map(labelText).join(' '), e.getAttribute('aria-label'),e.placeholder,e.name,e.id].filter(Boolean);
 const section = e => {
  const p = e.closest('fieldset,[data-simple-section],section,[data-automation-id="workExperience"],[data-automation-id="education"]');
  return norm(p ? (p.getAttribute('data-simple-section') || p.querySelector('legend,h2,h3,h4')?.textContent || p.getAttribute('data-automation-id')) : '');
