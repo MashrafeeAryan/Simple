@@ -1,0 +1,2 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const {page,rules}=require('./harness.cjs');
+test("no-submit",()=>{const w=page("<form><label>Email<input></label><button type=\"submit\">Submit</button></form>");w.SimpleEngine.fill({profile:{email:'a@example.com'}},rules);assert.equal(w.document.querySelector('button').getAttribute('type'),'submit');assert.equal(w.document.querySelector('input').value,'a@example.com');w.close();});
