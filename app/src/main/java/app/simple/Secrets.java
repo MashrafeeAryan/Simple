@@ -1,8 +1,56 @@
 package app.simple;
-import android.content.Context;import android.security.keystore.*;import android.util.Base64;import javax.crypto.*;import javax.crypto.spec.GCMParameterSpec;import java.security.KeyStore;
+
+import android.content.Context;
+import android.security.keystore.*;
+import android.util.Base64;
+import java.security.KeyStore;
+import javax.crypto.*;
+import javax.crypto.spec.GCMParameterSpec;
+
 final class Secrets {
- static javax.crypto.SecretKey key()throws Exception{KeyStore s=KeyStore.getInstance("AndroidKeyStore");s.load(null);if(!s.containsAlias("simple-session")){KeyGenerator g=KeyGenerator.getInstance("AES","AndroidKeyStore");g.init(new KeyGenParameterSpec.Builder("simple-session",KeyProperties.PURPOSE_ENCRYPT|KeyProperties.PURPOSE_DECRYPT).setBlockModes(KeyProperties.BLOCK_MODE_GCM).setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE).build());g.generateKey();}return (javax.crypto.SecretKey)s.getKey("simple-session",null);}
- static void save(Context c,String token)throws Exception{Cipher cipher=Cipher.getInstance("AES/GCM/NoPadding");cipher.init(Cipher.ENCRYPT_MODE,key());c.getSharedPreferences("session",0).edit().putString("iv",Base64.encodeToString(cipher.getIV(),0)).putString("token",Base64.encodeToString(cipher.doFinal(token.getBytes(java.nio.charset.StandardCharsets.UTF_8)),0)).apply();}
- static String read(Context c)throws Exception{android.content.SharedPreferences p=c.getSharedPreferences("session",0);if(!p.contains("token"))return "";Cipher cipher=Cipher.getInstance("AES/GCM/NoPadding");cipher.init(Cipher.DECRYPT_MODE,key(),new GCMParameterSpec(128,Base64.decode(p.getString("iv",""),0)));return new String(cipher.doFinal(Base64.decode(p.getString("token",""),0)),java.nio.charset.StandardCharsets.UTF_8);}
- static void clear(Context c){c.getSharedPreferences("session",0).edit().clear().apply();}
+  static javax.crypto.SecretKey key() throws Exception {
+    KeyStore s = KeyStore.getInstance("AndroidKeyStore");
+    s.load(null);
+    if (!s.containsAlias("simple-session")) {
+      KeyGenerator g = KeyGenerator.getInstance("AES", "AndroidKeyStore");
+      g.init(
+          new KeyGenParameterSpec.Builder(
+                  "simple-session", KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+              .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+              .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+              .build());
+      g.generateKey();
+    }
+    return (javax.crypto.SecretKey) s.getKey("simple-session", null);
+  }
+
+  static void save(Context c, String token) throws Exception {
+    Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+    cipher.init(Cipher.ENCRYPT_MODE, key());
+    c.getSharedPreferences("session", 0)
+        .edit()
+        .putString("iv", Base64.encodeToString(cipher.getIV(), 0))
+        .putString(
+            "token",
+            Base64.encodeToString(
+                cipher.doFinal(token.getBytes(java.nio.charset.StandardCharsets.UTF_8)), 0))
+        .apply();
+  }
+
+  static String read(Context c) throws Exception {
+    android.content.SharedPreferences p = c.getSharedPreferences("session", 0);
+    if (!p.contains("token")) return "";
+    Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+    cipher.init(
+        Cipher.DECRYPT_MODE,
+        key(),
+        new GCMParameterSpec(128, Base64.decode(p.getString("iv", ""), 0)));
+    return new String(
+        cipher.doFinal(Base64.decode(p.getString("token", ""), 0)),
+        java.nio.charset.StandardCharsets.UTF_8);
+  }
+
+  static void clear(Context c) {
+    c.getSharedPreferences("session", 0).edit().clear().apply();
+  }
 }
