@@ -3,7 +3,7 @@
 const norm = s => String(s || '').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
 const exact = s => norm(s).replace(/\s+/g,' ');
 const visible = e => !e.disabled && !e.readOnly && e.getClientRects().length > 0;
-const label = e => [e.labels && [...e.labels].map(x=>x.innerText).join(' '), e.getAttribute('aria-label'),e.placeholder,e.name,e.id].filter(Boolean);
+const label = e => [e.labels && [...e.labels].map(x=>x.textContent).join(' '), e.getAttribute('aria-label'),e.placeholder,e.name,e.id].filter(Boolean);
 const section = e => {
  const p = e.closest('fieldset,[data-simple-section],section,[data-automation-id="workExperience"],[data-automation-id="education"]');
  return norm(p ? (p.getAttribute('data-simple-section') || p.querySelector('legend,h2,h3,h4')?.textContent || p.getAttribute('data-automation-id')) : '');
@@ -50,7 +50,7 @@ function fill(data,rules) {
 }
 const platform = host => /(^|\.)myworkdayjobs\.com$/.test(host)?'workday':/(^|\.)greenhouse\.io$/.test(host)?'greenhouse':/(^|\.)ashbyhq\.com$/.test(host)?'ashby':/(^|\.)lever\.co$/.test(host)?'lever':'general';
 const confirmed = () => {
- const p=platform(location.hostname); const t=norm(document.body.innerText);
+ const p=platform(location.hostname); const t=norm(document.body.textContent);
  const messages={workday:['application submitted','thank you for applying'],greenhouse:['your application has been submitted','thank you for applying'],ashby:['application submitted','your application has been submitted'],lever:['application submitted','thank you for applying']};
  return messages[p]?.some(m=>t.includes(m)) && !document.querySelector('input[type="email"],input[type="file"]');
 };
