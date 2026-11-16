@@ -1,7 +1,7 @@
 (() => {
 'use strict';
 const norm = s => String(s || '').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
-const exact = s => norm(s).replace(/\s+/g,' ');
+const exact = s => String(s||'').normalize('NFKC').toLowerCase().replace(/\s+/g,' ').trim();
 const visible = e => !e.disabled && !e.readOnly && e.getClientRects().length > 0;
 const labelText = x => {const copy=x.cloneNode(true);copy.querySelectorAll('input,select,textarea').forEach(e=>e.remove());return copy.textContent;};
 const label = e => [e.labels && [...e.labels].map(labelText).join(' '), e.getAttribute('aria-label'),(e.getAttribute('aria-labelledby')||'').split(/\s+/).map(id=>document.getElementById(id)?.textContent).join(' '),e.placeholder,e.name,e.id].filter(Boolean);
@@ -51,7 +51,7 @@ function fill(data,rules) {
    v=data[k]?.[idx]?.[field];
   } else if(key) v=data.profile?.[key];
   if(v===undefined) {
-   const q=e.labels?.[0]?.textContent || e.getAttribute('aria-label');
+   const q=(e.labels?.[0]?labelText(e.labels[0]):null) || e.getAttribute('aria-label');
    if(q) v=data.answers?.[exact(q)];
   }
   if(value(e,v)) count++;
