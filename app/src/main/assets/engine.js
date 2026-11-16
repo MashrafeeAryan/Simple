@@ -9,7 +9,8 @@ if(!window.__simpleEditedFields) {
 }
 const visible = e => !window.__simpleEditedFields.has(e) && !e.disabled && !e.readOnly && e.getClientRects().length > 0;
 const labelText = x => {const copy=x.cloneNode(true);copy.querySelectorAll('input,select,textarea').forEach(e=>e.remove());return copy.textContent;};
-const label = e => [e.labels && [...e.labels].map(labelText).join(' '), e.getAttribute('aria-label'),(e.getAttribute('aria-labelledby')||'').split(/\s+/).map(id=>(document.getElementById(id)||{}).textContent).join(' '),e.placeholder,e.name,e.id].filter(Boolean);
+const radioQuestion = e => {const f=e.type==='radio' && e.closest('fieldset');return f && f.querySelector('legend') ? f.querySelector('legend').textContent : '';};
+const label = e => [radioQuestion(e),e.labels && [...e.labels].map(labelText).join(' '), e.getAttribute('aria-label'),(e.getAttribute('aria-labelledby')||'').split(/\s+/).map(id=>(document.getElementById(id)||{}).textContent).join(' '),e.placeholder,e.name,e.id].filter(Boolean);
 const entrySelector='fieldset,[data-simple-entry],[data-automation-id^="workExperience-"],[data-automation-id^="education-"]';
 const section = e => {
  const wd=e.closest('[data-automation-id^="workExperience-"],[data-automation-id^="education-"]');
