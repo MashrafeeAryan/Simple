@@ -11,7 +11,7 @@ final class Documents {
   try(ParcelFileDescriptor fd=ParcelFileDescriptor.open(f,ParcelFileDescriptor.MODE_READ_ONLY);PdfRenderer renderer=new PdfRenderer(fd)){
    if(renderer.getPageCount()>50)throw new IOException("OCR supports up to 50 pages");
    for(int i=0;i<renderer.getPageCount();i++)try(PdfRenderer.Page page=renderer.openPage(i)){
-    float scale=Math.min(2f,2000f/Math.max(page.getWidth(),page.getHeight()));Bitmap image=Bitmap.createBitmap((int)(page.getWidth()*scale),(int)(page.getHeight()*scale),Bitmap.Config.ARGB_8888);image.eraseColor(Color.WHITE);page.render(image,null,null,PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);try{out.append(Tasks.await(recognizer.process(InputImage.fromBitmap(image,0)))).append('\n');}finally{image.recycle();}
+    float scale=Math.min(2f,2000f/Math.max(page.getWidth(),page.getHeight()));Bitmap image=Bitmap.createBitmap((int)(page.getWidth()*scale),(int)(page.getHeight()*scale),Bitmap.Config.ARGB_8888);image.eraseColor(Color.WHITE);page.render(image,null,null,PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);try{out.append(Tasks.await(recognizer.process(InputImage.fromBitmap(image,0))).getText()).append('\n');}finally{image.recycle();}
    }
   }finally{recognizer.close();}return out.toString();
  }
