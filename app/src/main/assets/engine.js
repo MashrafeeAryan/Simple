@@ -54,6 +54,15 @@ function fill(data,rules) {
   }
   if(value(e,v)) count++;
  }
+ if(!window.__simpleLastExpand || Date.now()-window.__simpleLastExpand>3000) {
+  for(const kind of ['work','education']) {
+   if(groups[kind].length && (data[kind]?.length||0)>groups[kind].length) {
+    const names=kind==='work'?['add work experience','add another work experience']:['add education','add another education'];
+    const buttons=[...document.querySelectorAll('button')].filter(b=>visible(b)&&names.includes(norm(b.textContent)));
+    if(buttons.length===1){window.__simpleLastExpand=Date.now();buttons[0].click();break;}
+   }
+  }
+ }
  return count;
 }
 const platform = host => /(^|\.)myworkdayjobs\.com$/.test(host)?'workday':/(^|\.)greenhouse\.io$/.test(host)?'greenhouse':/(^|\.)ashbyhq\.com$/.test(host)?'ashby':/(^|\.)lever\.co$/.test(host)?'lever':'general';
