@@ -1,0 +1,2 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const {page,rules}=require('./harness.cjs');
+test("work-repeat",()=>{const w=page("<fieldset><legend>Work experience</legend><label>Company<input></label></fieldset><fieldset><legend>Work experience</legend><label>Company<input></label></fieldset>");w.SimpleEngine.fill({work:[{company:'One'},{company:'Two'}]},rules);assert.deepEqual([...w.document.querySelectorAll('input')].map(e=>e.value),['One','Two']);w.close();});
