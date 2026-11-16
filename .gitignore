@@ -1,0 +1,7 @@
+*.iml
+.gradle/
+**/build/
+local.properties
+supabase.properties
+*.keystore
+captures/
