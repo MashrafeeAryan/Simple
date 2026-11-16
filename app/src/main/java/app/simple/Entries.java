@@ -1,0 +1,8 @@
+package app.simple;
+import android.app.Activity;import android.widget.*;import org.json.*;import java.util.*;
+final class Entries {
+ final Activity activity;final LinearLayout container;final String[] keys;final List<Map<String,EditText>> entries=new ArrayList<>();
+ Entries(Activity a,LinearLayout parent,String title,JSONArray data,String[] fields){activity=a;keys=fields;TextView h=new TextView(a);h.setText(title);h.setTextSize(20);parent.addView(h);container=new LinearLayout(a);container.setOrientation(1);parent.addView(container);if(data!=null)for(int i=0;i<data.length();i++)add(data.optJSONObject(i));Button b=new Button(a);b.setText("Add "+title.toLowerCase());parent.addView(b);b.setOnClickListener(v->add(new JSONObject()));}
+ void add(JSONObject data){if(data==null)data=new JSONObject();LinearLayout card=new LinearLayout(activity);card.setOrientation(1);card.setPadding(12,12,12,24);container.addView(card);Map<String,EditText> values=new LinkedHashMap<>();entries.add(values);for(String key:keys){EditText e=new EditText(activity);e.setHint(key);e.setText(data.optString(key));card.addView(e);values.put(key,e);}Button remove=new Button(activity);remove.setText("Remove entry");card.addView(remove);remove.setOnClickListener(v->{container.removeView(card);entries.remove(values);});}
+ JSONArray read()throws JSONException{JSONArray out=new JSONArray();for(Map<String,EditText> values:entries){JSONObject entry=new JSONObject();for(String k:values.keySet()){String v=values.get(k).getText().toString().trim();if(!v.isEmpty())entry.put(k,v);}if(entry.length()>0)out.put(entry);}return out;}
+}
