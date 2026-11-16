@@ -5,11 +5,14 @@ const exact = s => norm(s).replace(/\s+/g,' ');
 const visible = e => !e.disabled && !e.readOnly && e.getClientRects().length > 0;
 const labelText = x => {const copy=x.cloneNode(true);copy.querySelectorAll('input,select,textarea').forEach(e=>e.remove());return copy.textContent;};
 const label = e => [e.labels && [...e.labels].map(labelText).join(' '), e.getAttribute('aria-label'),(e.getAttribute('aria-labelledby')||'').split(/\s+/).map(id=>document.getElementById(id)?.textContent).join(' '),e.placeholder,e.name,e.id].filter(Boolean);
+const entrySelector='fieldset,[data-simple-entry],[data-automation-id^="workExperience-"],[data-automation-id^="education-"]';
 const section = e => {
+ const wd=e.closest('[data-automation-id^="workExperience-"],[data-automation-id^="education-"]');
+ if(wd) return norm(wd.getAttribute('data-automation-id'));
  const p = e.closest('fieldset,[data-simple-section],section,[data-automation-id="workExperience"],[data-automation-id="education"]');
  return norm(p ? (p.getAttribute('data-simple-section') || p.querySelector('legend,h2,h3,h4')?.textContent || p.getAttribute('data-automation-id')) : '');
 };
-const group = e => e.closest('fieldset,[data-simple-entry],[data-automation-id="workExperience"],[data-automation-id="education"]') || e.form || document.body;
+const group = e => e.closest(entrySelector) || e.form || document.body;
 function value(e,v) {
  if(v === undefined || v === null || v === '') return false;
  if(e.type==='file' || e.type==='password' || e.type==='hidden' || e.type==='submit') return false;
