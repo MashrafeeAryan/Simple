@@ -5,3 +5,4 @@ local.properties
 supabase.properties
 *.keystore
 captures/
+**/node_modules/
