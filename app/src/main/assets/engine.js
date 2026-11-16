@@ -4,7 +4,7 @@ const norm = s => String(s || '').normalize('NFKC').toLowerCase().replace(/[^\p{
 const exact = s => norm(s).replace(/\s+/g,' ');
 const visible = e => !e.disabled && !e.readOnly && e.getClientRects().length > 0;
 const labelText = x => {const copy=x.cloneNode(true);copy.querySelectorAll('input,select,textarea').forEach(e=>e.remove());return copy.textContent;};
-const label = e => [e.labels && [...e.labels].map(labelText).join(' '), e.getAttribute('aria-label'),e.placeholder,e.name,e.id].filter(Boolean);
+const label = e => [e.labels && [...e.labels].map(labelText).join(' '), e.getAttribute('aria-label'),(e.getAttribute('aria-labelledby')||'').split(/\s+/).map(id=>document.getElementById(id)?.textContent).join(' '),e.placeholder,e.name,e.id].filter(Boolean);
 const section = e => {
  const p = e.closest('fieldset,[data-simple-section],section,[data-automation-id="workExperience"],[data-automation-id="education"]');
  return norm(p ? (p.getAttribute('data-simple-section') || p.querySelector('legend,h2,h3,h4')?.textContent || p.getAttribute('data-automation-id')) : '');
@@ -30,6 +30,10 @@ function value(e,v) {
 }
 function fill(data,rules) {
  let count=0; const groups={work:[],education:[]};
+ for(const e of document.querySelectorAll('input,select,textarea')) {
+  const sec=section(e),kind=/education|school|academic/.test(sec)?'education':/work|employment|experience/.test(sec)?'work':null;
+  if(kind && !groups[kind].includes(group(e))) groups[kind].push(group(e));
+ }
  for(const e of document.querySelectorAll('input,select,textarea')) {
   if(!visible(e) || (e.value && !['checkbox','radio'].includes(e.type))) continue;
   const labels=label(e).map(norm); const sec=section(e);let key;
