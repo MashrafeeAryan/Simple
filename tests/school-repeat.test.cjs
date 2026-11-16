@@ -1,0 +1,2 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const {page,rules}=require('./harness.cjs');
+test("school-repeat",()=>{const w=page("<fieldset><legend>Education</legend><label>School<input></label></fieldset><fieldset><legend>Education</legend><label>School<input></label></fieldset>");w.SimpleEngine.fill({education:[{school:'One'},{school:'Two'}]},rules);assert.deepEqual([...w.document.querySelectorAll('input')].map(e=>e.value),['One','Two']);w.close();});
