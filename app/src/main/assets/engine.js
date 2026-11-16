@@ -54,7 +54,15 @@ function fill(data,rules) {
  return count;
 }
 const platform = host => /(^|\.)myworkdayjobs\.com$/.test(host)?'workday':/(^|\.)greenhouse\.io$/.test(host)?'greenhouse':/(^|\.)ashbyhq\.com$/.test(host)?'ashby':/(^|\.)lever\.co$/.test(host)?'lever':'general';
+if(!window.__simpleSubmissionObserver) {
+ window.__simpleSubmissionObserver=true;
+ const mark=()=>sessionStorage.setItem('simple-submit-intent',String(Date.now()));
+ document.addEventListener('submit',mark,true);
+ document.addEventListener('click',e=>{const b=e.target.closest('button,input[type="submit"]');if(b && /^(submit|submit application|send application|apply)$/.test(norm(b.textContent||b.value))) mark();},true);
+}
 const confirmed = () => {
+ const intent=Number(sessionStorage.getItem('simple-submit-intent')||0);
+ if(!intent || Date.now()-intent>600000) return false;
  const p=platform(location.hostname); const t=norm(document.body.textContent);
  const messages={workday:['application submitted','thank you for applying'],greenhouse:['your application has been submitted','thank you for applying'],ashby:['application submitted','your application has been submitted'],lever:['application submitted','thank you for applying']};
  return messages[p]?.some(m=>t.includes(m)) && !document.querySelector('input[type="email"],input[type="file"]');
