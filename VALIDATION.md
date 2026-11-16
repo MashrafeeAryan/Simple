@@ -5,7 +5,7 @@
 - Debug APK assembled with Gradle 8.10.2, JDK 21 and Android SDK 35. Minimum Android version: 10 / API 29.
 - Android lint: passed (warnings remain, including hardcoded strings and deprecated Android APIs).
 - JVM: 3 keyword tests passed, none skipped or failed.
-- DOM: 36 tests passed, none skipped or failed. Covers contact data, existing/user-edited fields, optional demographics, explicit work authorization, radio/select controls, repeatable work and education, Workday-style indexed entries, explicit Add experience expansion, exact answer reuse across employer origins, cover text, step remounts, framework events, no automatic submission, and confirmation signatures for four hiring platforms.
+- DOM: 37 tests passed, none skipped or failed. Covers contact data, existing/user-edited fields, optional demographics, explicit work authorization, radio/select controls, repeatable work and education, Workday-style indexed entries, explicit Add experience expansion, exact answer reuse across employer origins, cover text, step remounts, framework events, no automatic submission, and confirmation signatures for four hiring platforms.
 - Android 10 x86_64 software emulator: five core instrumentation tests passed in a completed run: selected-file provider access, encrypted session round-trip, DOCX extraction, confirmed-job deduplication, and scanned-PDF OCR. OCR recognized text rendered into a generated PDF using the bundled offline model.
 - Android share/WebView test passed separately: ACTION_SEND text containing an HTTPS URL opens that URL directly in the built-in WebView; the actual WebView engine fills an email field on an HTTPS-origin HTML fixture.
 

@@ -57,7 +57,7 @@ function fill(data,rules) {
    v=((data[k]||[])[idx]||{})[field];
   } else if(key) v=(data.profile||{})[key];
   if(v===undefined) {
-   const q=((e.labels||[])[0]?labelText(e.labels[0]):null) || e.getAttribute('aria-label');
+   const q=radioQuestion(e) || ((e.labels||[])[0]?labelText(e.labels[0]):null) || e.getAttribute('aria-label');
    if(q) v=(data.answers||{})[exact(q)];
   }
   if(value(e,v)) count++;
