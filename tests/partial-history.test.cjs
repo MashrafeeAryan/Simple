@@ -1,0 +1,2 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const {page,rules}=require('./harness.cjs');
+test('partially filled history keeps second entry index',()=>{const w=page('<fieldset><legend>Work</legend><label>Company<input value="One"></label></fieldset><fieldset><legend>Work</legend><label>Company<input></label></fieldset>');w.SimpleEngine.fill({work:[{company:'One'},{company:'Two'}]},rules);assert.equal(w.document.querySelectorAll('input')[1].value,'Two');w.close()});
