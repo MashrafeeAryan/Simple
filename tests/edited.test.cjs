@@ -1,0 +1,2 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const {page,rules}=require('./harness.cjs');
+test('a user-edited blank field remains blank on later passes',()=>{const w=page('<label>Email<input></label>');const input=w.document.querySelector('input');w.SimpleEngine.fill({profile:{email:'saved@example.org'}},rules);input.value='';w.__simpleEditedFields.add(input);w.SimpleEngine.fill({profile:{email:'saved@example.org'}},rules);assert.equal(input.value,'');w.close()});
