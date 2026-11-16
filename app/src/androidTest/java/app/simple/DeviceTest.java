@@ -117,14 +117,16 @@ public class DeviceTest {
           new java.util.concurrent.atomic.AtomicReference<>();
       inst.runOnMainSync(
           () -> {
+            activity.web.stopLoading();
             activity.web.setWebViewClient(
                 new android.webkit.WebViewClient() {
                   public void onPageFinished(android.webkit.WebView v, String u) {
+                    if (!u.equals("https://jobs.lever.co/example")) return;
                     v.evaluateJavascript(
                         activity.engine
                             + ";SimpleEngine.fill({profile:{email:'alex@example.org'}},"
                             + activity.rules
-                            + ");document.querySelector('input').value",
+                            + ");document.querySelector('#fixture').value",
                         value -> {
                           result.set(value);
                           ready.countDown();
@@ -133,7 +135,7 @@ public class DeviceTest {
                 });
             activity.web.loadDataWithBaseURL(
                 "https://jobs.lever.co/example",
-                "<label>Email<input type='email'></label>",
+                "<label>Email<input id='fixture' type='email'></label>",
                 "text/html",
                 "UTF-8",
                 null);
